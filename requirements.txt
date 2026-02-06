@@ -1,0 +1,15 @@
+# Core (no external deps needed for pipelines 1, 2, 4, 5, 6)
+# Optional dependencies for enhanced features:
+
+# Pipeline 3 (RAG) - Vector database
+chromadb>=0.4.0
+
+# Pipeline 4 & 5 - YAML parsing for OpenAPI specs
+pyyaml>=6.0
+
+# LLM integration (optional - uncomment as needed)
+# openai>=1.0
+# tiktoken>=0.5
+
+# Sentence embeddings (optional - for local embeddings)
+# sentence-transformers>=2.2

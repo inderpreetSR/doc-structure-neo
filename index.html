@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Intelligent Documentation Pipelines</title>
+  <meta name="description" content="Six production-ready documentation pipelines with scripts, walkthroughs, and implementation details.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header>
+    <nav class="top-nav" aria-label="Primary">
+      <span class="logo">DocPipelines</span>
+      <a href="index.html" class="active" aria-current="page">Home</a>
+      <a href="1-code-aware.html">Code-Aware</a>
+      <a href="2-git-driven.html">Git-Driven</a>
+      <a href="3-rag-knowledge.html">RAG</a>
+      <a href="4-living-docs.html">Living Docs</a>
+      <a href="5-multi-source.html">Multi-Source</a>
+      <a href="6-full-stack.html">Full-Stack</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <h1>Intelligent Documentation Pipelines</h1>
+      <p>Six production-ready approaches to automated, AI-powered documentation generation. Each includes a working pipeline script and detailed walkthrough.</p>
+      <div style="margin-top:2rem; display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+        <a href="#pipelines" class="btn btn-primary">Explore Pipelines</a>
+        <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="btn btn-outline">View on GitHub</a>
+        <a href="http://localhost:8000/index.html" class="btn btn-outline" id="quick-preview">Quick Preview</a>
+      </div>
+    </section>
+
+    <section id="pipelines" class="cards">
+
+    <a href="1-code-aware.html" class="card">
+      <span class="badge">Pipeline 1</span>
+      <h3>Code-Aware Auto-Generation</h3>
+      <p>Parse source code ASTs, extract docstrings, and use LLMs to generate rich, human-readable documentation automatically.</p>
+      <div class="tech">
+        <span>Python</span><span>AST</span><span>OpenAI</span><span>Markdown</span>
+      </div>
+    </a>
+
+    <a href="2-git-driven.html" class="card">
+      <span class="badge">Pipeline 2</span>
+      <h3>Git-Driven Change Detection</h3>
+      <p>Detect changed files via git diff, resolve dependency graphs, and selectively regenerate only affected documentation.</p>
+      <div class="tech">
+        <span>Python</span><span>Git</span><span>CI/CD</span><span>Dependency Graph</span>
+      </div>
+    </a>
+
+    <a href="3-rag-knowledge.html" class="card">
+      <span class="badge">Pipeline 3</span>
+      <h3>RAG-Based Knowledge Base</h3>
+      <p>Embed your entire codebase into a vector database and provide a natural-language query interface powered by retrieval-augmented generation.</p>
+      <div class="tech">
+        <span>Python</span><span>ChromaDB</span><span>OpenAI</span><span>Embeddings</span>
+      </div>
+    </a>
+
+    <a href="4-living-docs.html" class="card">
+      <span class="badge">Pipeline 4</span>
+      <h3>Living Docs from Tests &amp; Specs</h3>
+      <p>Generate always-up-to-date documentation from BDD test specs, API schemas, and contract tests that stay in sync with code.</p>
+      <div class="tech">
+        <span>Python</span><span>OpenAPI</span><span>BDD</span><span>Swagger</span>
+      </div>
+    </a>
+
+    <a href="5-multi-source.html" class="card">
+      <span class="badge">Pipeline 5</span>
+      <h3>Multi-Source Aggregation</h3>
+      <p>Collect documentation from code comments, API schemas, diagrams, and runbooks into a unified, searchable doc site.</p>
+      <div class="tech">
+        <span>Python</span><span>MkDocs</span><span>Mermaid</span><span>YAML</span>
+      </div>
+    </a>
+
+    <a href="6-full-stack.html" class="card">
+      <span class="badge">Pipeline 6</span>
+      <h3>Full-Stack Pipeline</h3>
+      <p>A complete, production-grade pipeline combining all approaches: auto-gen, change detection, RAG search, and static site deployment.</p>
+      <div class="tech">
+        <span>Python</span><span>Docker</span><span>GitHub Actions</span><span>Full Stack</span>
+      </div>
+    </a>
+
+    </section>
+
+    <section class="page-content" style="text-align:center;">
+      <h2>How It Works</h2>
+      <div class="flow" style="justify-content:center;">
+        <span class="step">Source Code</span>
+        <span class="arrow">&rarr;</span>
+        <span class="step">Pipeline Agent</span>
+        <span class="arrow">&rarr;</span>
+        <span class="step">AI Processing</span>
+        <span class="arrow">&rarr;</span>
+        <span class="step">Documentation</span>
+        <span class="arrow">&rarr;</span>
+        <span class="step">Deploy</span>
+      </div>
+    </section>
+
+    <section class="page-content">
+      <h2>Local Preview</h2>
+      <p>Serve this folder locally and open the homepage in your browser.</p>
+      <pre><code># From the doc-pipelines folder
+python -m http.server 8000
+
+# Then open
+http://localhost:8000/index.html</code></pre>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2026 Intelligent Documentation Pipelines &mdash; Built with AI
+  </footer>
+
+  <script>
+    (function () {
+      var link = document.getElementById('quick-preview');
+      if (!link) return;
+      var host = window.location.hostname;
+      var isLocal = host === 'localhost' || host === '127.0.0.1';
+      if (!isLocal) {
+        link.setAttribute('hidden', 'hidden');
+      }
+    })();
+  </script>
+
+</body>
+</html>

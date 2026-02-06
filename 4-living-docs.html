@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pipeline 4: Living Docs from Tests &amp; Specs</title>
+  <meta name="description" content="Pipeline 4: Generate living docs from BDD specs, OpenAPI schemas, and contract tests.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header>
+    <nav class="top-nav" aria-label="Primary">
+      <span class="logo">DocPipelines</span>
+      <a href="index.html">Home</a>
+      <a href="1-code-aware.html">Code-Aware</a>
+      <a href="2-git-driven.html">Git-Driven</a>
+      <a href="3-rag-knowledge.html">RAG</a>
+      <a href="4-living-docs.html" class="active" aria-current="page">Living Docs</a>
+      <a href="5-multi-source.html">Multi-Source</a>
+      <a href="6-full-stack.html">Full-Stack</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <h1>Living Docs from Tests &amp; Specs</h1>
+      <p>Generate always-up-to-date documentation from BDD test specs, API schemas (OpenAPI/Swagger), and contract tests that stay in sync with your code.</p>
+    </section>
+
+    <section class="page-content">
+
+    <h2>Architecture</h2>
+    <div class="flow">
+      <span class="step">Test Specs</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">OpenAPI Schemas</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">Parser Engine</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">Doc Templates</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">Living Docs Site</span>
+    </div>
+
+    <h2>Sources</h2>
+    <table>
+      <thead>
+        <tr><th>Source</th><th>Format</th><th>What It Documents</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>BDD Feature Files</td><td>.feature (Gherkin)</td><td>User stories, acceptance criteria</td></tr>
+        <tr><td>OpenAPI / Swagger</td><td>.yaml / .json</td><td>REST API endpoints, schemas</td></tr>
+        <tr><td>Pytest Markers</td><td>.py test files</td><td>Test coverage, component behavior</td></tr>
+        <tr><td>Contract Tests</td><td>Pact JSON</td><td>Service-to-service interactions</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Pipeline Script</h2>
+    <pre><code># pipelines/4-living-docs/pipeline.py
+# Run: python pipeline.py --project ./your-project --output ./docs
+
+import os, re, json, argparse, yaml
+from pathlib import Path
+from datetime import datetime
+
+class LivingDocsPipeline:
+    """Generate documentation from tests, specs, and API schemas."""
+
+    def __init__(self, project_dir, output_dir):
+        self.project_dir = Path(project_dir)
+        self.output_dir = Path(output_dir)
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+        self.docs = []
+
+    # ---- BDD / Gherkin Feature Files ----
+
+    def parse_feature_files(self):
+        """Parse .feature files (Gherkin syntax) into documentation."""
+        features = list(self.project_dir.rglob('*.feature'))
+        print(f"[bdd] Found {len(features)} feature files")
+        parsed = []
+        for fpath in features:
+            content = fpath.read_text(encoding='utf-8')
+            feature_match = re.search(r'Feature:\s*(.+)', content)
+            scenarios = re.findall(
+                r'Scenario(?:\s+Outline)?:\s*(.+?)(?=\n\s*(?:Scenario|$))',
+                content, re.DOTALL
+            )
+            feature_name = feature_match.group(1).strip() if feature_match else fpath.stem
+            scenario_names = []
+            for s in scenarios:
+                name = s.strip().split('\n')[0]
+                scenario_names.append(name)
+
+            parsed.append({
+                'type': 'feature',
+                'name': feature_name,
+                'file': str(fpath.relative_to(self.project_dir)),
+                'scenarios': scenario_names,
+                'raw': content
+            })
+        return parsed
+
+    # ---- OpenAPI / Swagger ----
+
+    def parse_openapi_specs(self):
+        """Parse OpenAPI/Swagger YAML/JSON specs."""
+        specs = []
+        for pattern in ['**/openapi.yaml', '**/openapi.yml', '**/swagger.yaml',
+                        '**/swagger.yml', '**/openapi.json', '**/swagger.json']:
+            specs.extend(self.project_dir.glob(pattern))
+
+        print(f"[api] Found {len(specs)} OpenAPI specs")
+        parsed = []
+        for spec_path in specs:
+            content = spec_path.read_text(encoding='utf-8')
+            if spec_path.suffix == '.json':
+                spec = json.loads(content)
+            else:
+                try:
+                    spec = yaml.safe_load(content)
+                except Exception:
+                    spec = {'info': {'title': spec_path.stem}, 'paths': {}}
+
+            info = spec.get('info', {})
+            paths = spec.get('paths', {})
+            endpoints = []
+            for path, methods in paths.items():
+                for method, details in methods.items():
+                    if method in ('get', 'post', 'put', 'patch', 'delete'):
+                        endpoints.append({
+                            'method': method.upper(),
+                            'path': path,
+                            'summary': details.get('summary', ''),
+                            'description': details.get('description', ''),
+                            'tags': details.get('tags', []),
+                            'responses': list(details.get('responses', {}).keys())
+                        })
+            parsed.append({
+                'type': 'api',
+                'title': info.get('title', 'API'),
+                'version': info.get('version', ''),
+                'description': info.get('description', ''),
+                'endpoints': endpoints,
+                'file': str(spec_path.relative_to(self.project_dir))
+            })
+        return parsed
+
+    # ---- Test File Scanner ----
+
+    def parse_test_files(self):
+        """Scan test files for documented test cases."""
+        test_files = list(self.project_dir.rglob('test_*.py'))
+        test_files += list(self.project_dir.rglob('*_test.py'))
+        print(f"[test] Found {len(test_files)} test files")
+        parsed = []
+        test_pattern = re.compile(r'def\s+(test_\w+)\s*\(.*?\):\s*\n\s*"""(.*?)"""',
+                                  re.DOTALL)
+        for tpath in test_files:
+            source = tpath.read_text(encoding='utf-8', errors='ignore')
+            tests = []
+            for match in test_pattern.finditer(source):
+                tests.append({
+                    'name': match.group(1),
+                    'description': match.group(2).strip()
+                })
+            # Also find undocumented tests
+            all_tests = re.findall(r'def\s+(test_\w+)', source)
+            parsed.append({
+                'type': 'tests',
+                'file': str(tpath.relative_to(self.project_dir)),
+                'documented_tests': tests,
+                'total_tests': len(all_tests),
+                'coverage': len(tests) / max(len(all_tests), 1) * 100
+            })
+        return parsed
+
+    # ---- Markdown Renderer ----
+
+    def render_docs(self, features, apis, tests):
+        """Render all parsed sources into Markdown documentation."""
+        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M')
+
+        # 1. Features doc
+        if features:
+            md = f"# Feature Documentation\n\n*Generated: {timestamp}*\n\n"
+            for feat in features:
+                md += f"## {feat['name']}\n\n"
+                md += f"*Source: `{feat['file']}`*\n\n"
+                if feat['scenarios']:
+                    md += "### Scenarios\n\n"
+                    for s in feat['scenarios']:
+                        md += f"- {s}\n"
+                    md += "\n"
+            (self.output_dir / 'features.md').write_text(md, encoding='utf-8')
+
+        # 2. API docs
+        if apis:
+            md = f"# API Documentation\n\n*Generated: {timestamp}*\n\n"
+            for api in apis:
+                md += f"## {api['title']} v{api['version']}\n\n"
+                md += f"{api['description']}\n\n"
+                md += "| Method | Path | Summary |\n"
+                md += "|--------|------|---------|\n"
+                for ep in api['endpoints']:
+                    md += f"| `{ep['method']}` | `{ep['path']}` | {ep['summary']} |\n"
+                md += "\n"
+            (self.output_dir / 'api.md').write_text(md, encoding='utf-8')
+
+        # 3. Test docs
+        if tests:
+            md = f"# Test Documentation\n\n*Generated: {timestamp}*\n\n"
+            total_tests = sum(t['total_tests'] for t in tests)
+            total_documented = sum(len(t['documented_tests']) for t in tests)
+            md += f"**Total tests:** {total_tests}  \n"
+            md += f"**Documented:** {total_documented} ({total_documented/max(total_tests,1)*100:.0f}%)\n\n"
+            for t in tests:
+                md += f"## `{t['file']}`\n\n"
+                md += f"Tests: {t['total_tests']} | Documented: {len(t['documented_tests'])} | Coverage: {t['coverage']:.0f}%\n\n"
+                for dt in t['documented_tests']:
+                    md += f"### `{dt['name']}`\n\n{dt['description']}\n\n"
+            (self.output_dir / 'tests.md').write_text(md, encoding='utf-8')
+
+        # 4. Index
+        md = f"# Living Documentation Index\n\n*Generated: {timestamp}*\n\n"
+        md += f"- [{len(features)} Feature Specs](features.md)\n"
+        md += f"- [{sum(len(a['endpoints']) for a in apis)} API Endpoints](api.md)\n"
+        md += f"- [{sum(t['total_tests'] for t in tests)} Test Cases](tests.md)\n"
+        (self.output_dir / 'index.md').write_text(md, encoding='utf-8')
+
+    def run(self):
+        """Execute the full pipeline."""
+        features = self.parse_feature_files()
+        apis = self.parse_openapi_specs()
+        tests = self.parse_test_files()
+        self.render_docs(features, apis, tests)
+        print(f"\n[done] Living docs generated in {self.output_dir}")
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Living Docs Pipeline')
+    parser.add_argument('--project', required=True, help='Project directory')
+    parser.add_argument('--output', default='./docs', help='Output directory')
+    args = parser.parse_args()
+    pipeline = LivingDocsPipeline(args.project, args.output)
+    pipeline.run()
+</code></pre>
+
+    <h2>Key Features</h2>
+    <ul>
+      <li>Parses Gherkin .feature files into human-readable feature docs</li>
+      <li>Converts OpenAPI/Swagger specs into API reference tables</li>
+      <li>Scans test files for documented test cases with coverage %</li>
+      <li>Generates a unified index linking all documentation</li>
+      <li>Always in sync &mdash; regenerate on every CI build</li>
+    </ul>
+
+    </section>
+  </main>
+
+  <footer>
+    <a href="index.html" class="btn btn-outline" style="margin-bottom:1rem;">Back to All Pipelines</a>
+    <p>&copy; 2026 Intelligent Documentation Pipelines</p>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pipeline 1: Code-Aware Auto-Generation</title>
+  <meta name="description" content="Pipeline 1: Parse source code with ASTs and auto-generate documentation with optional LLM enrichment.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header>
+    <nav class="top-nav" aria-label="Primary">
+      <span class="logo">DocPipelines</span>
+      <a href="index.html">Home</a>
+      <a href="1-code-aware.html" class="active" aria-current="page">Code-Aware</a>
+      <a href="2-git-driven.html">Git-Driven</a>
+      <a href="3-rag-knowledge.html">RAG</a>
+      <a href="4-living-docs.html">Living Docs</a>
+      <a href="5-multi-source.html">Multi-Source</a>
+      <a href="6-full-stack.html">Full-Stack</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <h1>Code-Aware Auto-Generation</h1>
+      <p>Parse source code into ASTs, extract function signatures and docstrings, then use an LLM to produce rich documentation.</p>
+    </section>
+
+    <section class="page-content">
+
+    <h2>Architecture</h2>
+    <div class="flow">
+      <span class="step">Source Files</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">AST Parser</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">Metadata Extractor</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">LLM Summarizer</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">Markdown / HTML</span>
+    </div>
+
+    <h2>How It Works</h2>
+    <ol>
+      <li><strong>Scan</strong> &mdash; Recursively find all source files (.py, .js, .ts, etc.)</li>
+      <li><strong>Parse</strong> &mdash; Use language-specific AST parsers to extract functions, classes, parameters, return types</li>
+      <li><strong>Enrich</strong> &mdash; Feed extracted metadata to an LLM with a prompt template requesting structured documentation</li>
+      <li><strong>Render</strong> &mdash; Convert LLM output into Markdown or HTML documentation pages</li>
+      <li><strong>Index</strong> &mdash; Build a searchable index across all generated docs</li>
+    </ol>
+
+    <h2>Pipeline Script</h2>
+    <p>The Python script below implements this pipeline end-to-end:</p>
+    <pre><code># pipelines/1-code-aware/pipeline.py
+# Run: python pipeline.py --source ./your-project --output ./docs
+
+import ast, os, json, argparse, hashlib
+from pathlib import Path
+from datetime import datetime
+
+class CodeAwareDocGenerator:
+    """Parses Python source files and generates documentation."""
+
+    def __init__(self, source_dir, output_dir):
+        self.source_dir = Path(source_dir)
+        self.output_dir = Path(output_dir)
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+        self.registry = []
+
+    def scan_files(self, extensions=('.py',)):
+        """Recursively find all source files."""
+        files = []
+        for ext in extensions:
+            files.extend(self.source_dir.rglob(f'*{ext}'))
+        return sorted(files)
+
+    def parse_python_file(self, filepath):
+        """Parse a Python file and extract classes/functions."""
+        with open(filepath, 'r', encoding='utf-8') as f:
+            source = f.read()
+        tree = ast.parse(source, filename=str(filepath))
+        items = []
+        for node in ast.walk(tree):
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                items.append({
+                    'type': 'function',
+                    'name': node.name,
+                    'args': [a.arg for a in node.args.args],
+                    'docstring': ast.get_docstring(node) or '',
+                    'lineno': node.lineno,
+                    'returns': ast.dump(node.returns) if node.returns else None
+                })
+            elif isinstance(node, ast.ClassDef):
+                methods = [n.name for n in node.body
+                           if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))]
+                items.append({
+                    'type': 'class',
+                    'name': node.name,
+                    'methods': methods,
+                    'docstring': ast.get_docstring(node) or '',
+                    'lineno': node.lineno
+                })
+        return items
+
+    def generate_llm_prompt(self, filepath, items):
+        """Build an LLM prompt for documentation."""
+        prompt = f"Generate documentation for {filepath.name}:\n\n"
+        for item in items:
+            if item['type'] == 'function':
+                prompt += f"Function: {item['name']}({', '.join(item['args'])})\n"
+                prompt += f"  Docstring: {item['docstring']}\n"
+                prompt += f"  Returns: {item['returns']}\n\n"
+            elif item['type'] == 'class':
+                prompt += f"Class: {item['name']}\n"
+                prompt += f"  Methods: {', '.join(item['methods'])}\n"
+                prompt += f"  Docstring: {item['docstring']}\n\n"
+        return prompt
+
+    def render_markdown(self, filepath, items):
+        """Render extracted items into Markdown."""
+        rel = filepath.relative_to(self.source_dir)
+        md = f"# {rel}\n\n"
+        md += f"*Auto-generated on {datetime.now().strftime('%Y-%m-%d %H:%M')}*\n\n"
+        md += "---\n\n"
+        for item in items:
+            if item['type'] == 'class':
+                md += f"## Class `{item['name']}`\n\n"
+                if item['docstring']:
+                    md += f"> {item['docstring']}\n\n"
+                md += f"**Methods:** {', '.join(f'`{m}`' for m in item['methods'])}\n\n"
+            elif item['type'] == 'function':
+                md += f"### `{item['name']}({', '.join(item['args'])})`\n\n"
+                if item['docstring']:
+                    md += f"> {item['docstring']}\n\n"
+                if item['returns']:
+                    md += f"**Returns:** `{item['returns']}`\n\n"
+                md += f"*Line {item['lineno']}*\n\n"
+        return md
+
+    def run(self):
+        """Execute the full pipeline."""
+        files = self.scan_files()
+        print(f"[scan] Found {len(files)} Python files")
+        for filepath in files:
+            items = self.parse_python_file(filepath)
+            if not items:
+                continue
+            md = self.render_markdown(filepath, items)
+            out_name = filepath.relative_to(self.source_dir)
+            out_path = self.output_dir / f"{out_name}.md"
+            out_path.parent.mkdir(parents=True, exist_ok=True)
+            out_path.write_text(md, encoding='utf-8')
+            self.registry.append({
+                'source': str(filepath),
+                'output': str(out_path),
+                'items': len(items),
+                'hash': hashlib.md5(md.encode()).hexdigest()
+            })
+            print(f"[gen]  {out_name} -> {len(items)} items documented")
+        # Write registry
+        reg_path = self.output_dir / 'registry.json'
+        reg_path.write_text(json.dumps(self.registry, indent=2))
+        print(f"\n[done] Generated docs for {len(self.registry)} files")
+        print(f"[done] Registry saved to {reg_path}")
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Code-Aware Doc Generator')
+    parser.add_argument('--source', required=True, help='Source directory')
+    parser.add_argument('--output', default='./docs', help='Output directory')
+    args = parser.parse_args()
+    gen = CodeAwareDocGenerator(args.source, args.output)
+    gen.run()
+</code></pre>
+
+    <h2>Key Features</h2>
+    <ul>
+      <li>Full AST parsing for Python (extensible to JS/TS via tree-sitter)</li>
+      <li>Extracts functions, classes, arguments, return types, and docstrings</li>
+      <li>Generates LLM-ready prompts for AI-enhanced summaries</li>
+      <li>Outputs clean Markdown with a searchable registry (JSON)</li>
+      <li>Content-hash registry to enable incremental builds</li>
+    </ul>
+
+    <h2>Usage</h2>
+    <pre><code>cd pipelines/1-code-aware
+python pipeline.py --source ../../your-project --output ./docs</code></pre>
+
+    <h3>Extend with LLM</h3>
+    <p>To add LLM summarization, replace the <code>render_markdown</code> method with a provider API call:</p>
+    <pre><code>def summarize_with_llm(self, filepath, items, llm_client):
+    prompt = self.generate_llm_prompt(filepath, items)
+    response = llm_client.generate(prompt)
+    return response.text</code></pre>
+
+    </section>
+  </main>
+
+  <footer>
+    <a href="index.html" class="btn btn-outline" style="margin-bottom:1rem;">Back to All Pipelines</a>
+    <p>&copy; 2026 Intelligent Documentation Pipelines</p>
+  </footer>
+
+</body>
+</html>

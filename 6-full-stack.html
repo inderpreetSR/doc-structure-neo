@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pipeline 6: Full-Stack Pipeline</title>
+  <meta name="description" content="Pipeline 6: Orchestrate change detection, code analysis, RAG indexing, and deployment in one pipeline.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header>
+    <nav class="top-nav" aria-label="Primary">
+      <span class="logo">DocPipelines</span>
+      <a href="index.html">Home</a>
+      <a href="1-code-aware.html">Code-Aware</a>
+      <a href="2-git-driven.html">Git-Driven</a>
+      <a href="3-rag-knowledge.html">RAG</a>
+      <a href="4-living-docs.html">Living Docs</a>
+      <a href="5-multi-source.html">Multi-Source</a>
+      <a href="6-full-stack.html" class="active" aria-current="page">Full-Stack</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <h1>Full-Stack Pipeline</h1>
+      <p>A production-grade pipeline combining code analysis, change detection, RAG search, multi-source aggregation, and automated deployment into one unified system.</p>
+    </section>
+
+    <section class="page-content">
+
+    <h2>Architecture</h2>
+    <div class="flow">
+      <span class="step">Git Push</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">CI Trigger</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">Change Detection</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">Code Analysis</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">LLM Enrichment</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">Vector Index</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">Static Site</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">Deploy</span>
+    </div>
+
+    <h2>Component Map</h2>
+    <table>
+      <thead>
+        <tr><th>Component</th><th>Pipeline</th><th>Purpose</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Code Analyzer</td><td>#1 Code-Aware</td><td>Extract functions, classes, types</td></tr>
+        <tr><td>Change Detector</td><td>#2 Git-Driven</td><td>Incremental builds</td></tr>
+        <tr><td>Knowledge Base</td><td>#3 RAG</td><td>Searchable code Q&amp;A</td></tr>
+        <tr><td>Spec Parser</td><td>#4 Living Docs</td><td>Tests &amp; API schemas</td></tr>
+        <tr><td>Aggregator</td><td>#5 Multi-Source</td><td>Unified doc site</td></tr>
+        <tr><td>Orchestrator</td><td>#6 This Pipeline</td><td>Coordinates everything</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Pipeline Script</h2>
+    <pre><code># pipelines/6-full-stack/pipeline.py
+# The orchestrator that ties all pipelines together.
+# Run: python pipeline.py --project ./your-project --output ./docs
+
+import os, sys, json, argparse, time, hashlib, subprocess
+from pathlib import Path
+from datetime import datetime
+from importlib import import_module
+
+class FullStackDocPipeline:
+    """
+    Production-grade orchestrator combining all 5 pipelines:
+    1. Code-Aware Analysis
+    2. Git-Driven Change Detection
+    3. RAG Vector Indexing
+    4. Living Docs from Tests/Specs
+    5. Multi-Source Aggregation
+    """
+
+    def __init__(self, project_dir, output_dir, config=None):
+        self.project_dir = Path(project_dir).resolve()
+        self.output_dir = Path(output_dir).resolve()
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+        self.config = config or self._default_config()
+        self.report = {
+            'started': datetime.now().isoformat(),
+            'project': str(self.project_dir),
+            'stages': [],
+            'errors': [],
+            'stats': {}
+        }
+
+    def _default_config(self):
+        return {
+            'stages': {
+                'change_detection': True,
+                'code_analysis': True,
+                'rag_indexing': True,
+                'living_docs': True,
+                'aggregation': True,
+                'site_generation': True
+            },
+            'extensions': ['.py', '.js', '.ts', '.jsx', '.tsx', '.md'],
+            'ignore_patterns': ['.git', 'node_modules', '__pycache__', '.venv'],
+            'llm_provider': 'none',  # 'openai', 'anthropic', 'local', 'none'
+            'vector_db': 'memory',   # 'chromadb', 'memory'
+            'output_format': 'html'  # 'html', 'markdown', 'both'
+        }
+
+    # ---- Stage 1: Change Detection ----
+
+    def stage_change_detection(self):
+        """Detect what changed since last run."""
+        stage = {'name': 'change_detection', 'started': time.time()}
+        changed_files = []
+        cache_file = self.output_dir / '.doc-cache.json'
+        old_cache = {}
+        if cache_file.exists():
+            old_cache = json.loads(cache_file.read_text())
+
+        new_cache = {}
+        for ext in self.config['extensions']:
+            for filepath in self.project_dir.rglob(f'*{ext}'):
+                rel = str(filepath.relative_to(self.project_dir))
+                if any(p in rel for p in self.config['ignore_patterns']):
+                    continue
+                content_hash = hashlib.md5(
+                    filepath.read_bytes()
+                ).hexdigest()
+                new_cache[rel] = content_hash
+                if old_cache.get(rel) != content_hash:
+                    changed_files.append(rel)
+
+        cache_file.write_text(json.dumps(new_cache, indent=2))
+        stage['changed_files'] = len(changed_files)
+        stage['total_files'] = len(new_cache)
+        stage['elapsed'] = time.time() - stage['started']
+        self.report['stages'].append(stage)
+        print(f"[stage 1] Change detection: {len(changed_files)}/{len(new_cache)} files changed")
+        return changed_files
+
+    # ---- Stage 2: Code Analysis ----
+
+    def stage_code_analysis(self, files_to_analyze=None):
+        """Analyze source code and extract documentation metadata."""
+        import ast
+        stage = {'name': 'code_analysis', 'started': time.time()}
+        analysis = {}
+
+        py_files = list(self.project_dir.rglob('*.py'))
+        if files_to_analyze:
+            py_files = [self.project_dir / f for f in files_to_analyze if f.endswith('.py')]
+
+        for filepath in py_files:
+            if not filepath.exists():
+                continue
+            rel = str(filepath.relative_to(self.project_dir))
+            if any(p in rel for p in self.config['ignore_patterns']):
+                continue
+            try:
+                source = filepath.read_text(encoding='utf-8')
+                tree = ast.parse(source)
+                items = {
+                    'module_doc': ast.get_docstring(tree) or '',
+                    'functions': [],
+                    'classes': [],
+                    'lines': len(source.splitlines())
+                }
+                for node in ast.walk(tree):
+                    if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                        items['functions'].append({
+                            'name': node.name,
+                            'args': [a.arg for a in node.args.args],
+                            'doc': ast.get_docstring(node) or '',
+                            'line': node.lineno
+                        })
+                    elif isinstance(node, ast.ClassDef):
+                        items['classes'].append({
+                            'name': node.name,
+                            'doc': ast.get_docstring(node) or '',
+                            'methods': [n.name for n in node.body
+                                        if isinstance(n, ast.FunctionDef)],
+                            'line': node.lineno
+                        })
+                analysis[rel] = items
+            except Exception as e:
+                self.report['errors'].append(f"Parse error in {rel}: {str(e)}")
+
+        stage['analyzed_files'] = len(analysis)
+        stage['total_functions'] = sum(len(a['functions']) for a in analysis.values())
+        stage['total_classes'] = sum(len(a['classes']) for a in analysis.values())
+        stage['elapsed'] = time.time() - stage['started']
+        self.report['stages'].append(stage)
+        print(f"[stage 2] Code analysis: {len(analysis)} files, "
+              f"{stage['total_functions']} functions, {stage['total_classes']} classes")
+        return analysis
+
+    # ---- Stage 3: RAG Indexing ----
+
+    def stage_rag_indexing(self, analysis):
+        """Index analyzed code into searchable chunks."""
+        stage = {'name': 'rag_indexing', 'started': time.time()}
+        chunks = []
+        for filepath, items in analysis.items():
+            if items['module_doc']:
+                chunks.append({
+                    'id': hashlib.md5(f"{filepath}:module".encode()).hexdigest(),
+                    'text': items['module_doc'],
+                    'source': filepath, 'type': 'module_doc'
+                })
+            for func in items['functions']:
+                text = f"Function {func['name']}({', '.join(func['args'])})"
+                if func['doc']:
+                    text += f"\n{func['doc']}"
+                chunks.append({
+                    'id': hashlib.md5(f"{filepath}:{func['name']}".encode()).hexdigest(),
+                    'text': text,
+                    'source': filepath, 'type': 'function'
+                })
+            for cls in items['classes']:
+                text = f"Class {cls['name']}"
+                if cls['doc']:
+                    text += f"\n{cls['doc']}"
+                text += f"\nMethods: {', '.join(cls['methods'])}"
+                chunks.append({
+                    'id': hashlib.md5(f"{filepath}:{cls['name']}".encode()).hexdigest(),
+                    'text': text,
+                    'source': filepath, 'type': 'class'
+                })
+
+        # Save chunks index
+        index_path = self.output_dir / 'search-index.json'
+        index_path.write_text(json.dumps(chunks, indent=2))
+
+        stage['total_chunks'] = len(chunks)
+        stage['elapsed'] = time.time() - stage['started']
+        self.report['stages'].append(stage)
+        print(f"[stage 3] RAG indexing: {len(chunks)} searchable chunks")
+        return chunks
+
+    # ---- Stage 4: Living Docs ----
+
+    def stage_living_docs(self):
+        """Extract docs from tests, API specs, and feature files."""
+        import re
+        stage = {'name': 'living_docs', 'started': time.time()}
+        docs = {'features': 0, 'api_endpoints': 0, 'tests': 0}
+
+        # Count feature files
+        docs['features'] = len(list(self.project_dir.rglob('*.feature')))
+
+        # Count API specs
+        for pattern in ['**/openapi.*', '**/swagger.*']:
+            docs['api_endpoints'] += len(list(self.project_dir.glob(pattern)))
+
+        # Count test files
+        test_files = list(self.project_dir.rglob('test_*.py'))
+        test_files += list(self.project_dir.rglob('*_test.py'))
+        total_tests = 0
+        for tf in test_files:
+            source = tf.read_text(encoding='utf-8', errors='ignore')
+            total_tests += len(re.findall(r'def\s+test_\w+', source))
+        docs['tests'] = total_tests
+
+        stage.update(docs)
+        stage['elapsed'] = time.time() - stage['started']
+        self.report['stages'].append(stage)
+        print(f"[stage 4] Living docs: {docs['features']} features, "
+              f"{docs['api_endpoints']} API specs, {docs['tests']} tests")
+        return docs
+
+    # ---- Stage 5: Site Generation ----
+
+    def stage_site_generation(self, analysis, chunks, living_docs):
+        """Generate the final documentation site."""
+        stage = {'name': 'site_generation', 'started': time.time()}
+        site_dir = self.output_dir / 'site'
+        site_dir.mkdir(parents=True, exist_ok=True)
+        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M')
+        pages_generated = 0
+
+        # ---- Index Page ----
+        index_html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Project Documentation</title>
+<style>
+  :root {{ --bg:#0f0f1a; --s:#1a1a2e; --a:#00d4ff; --t:#e0e0f0; --td:#8888aa; --b:#2a2a44; }}
+  * {{ margin:0;padding:0;box-sizing:border-box; }}
+  body {{ font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg); color:var(--t); line-height:1.7; }}
+  .container {{ max-width:960px; margin:0 auto; padding:2rem; }}
+  h1 {{ font-size:2.5rem; background:linear-gradient(135deg,var(--a),#7b61ff);
+       -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin:2rem 0 1rem; }}
+  h2 {{ color:var(--a); margin:1.5rem 0 0.8rem; }}
+  .stats {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1rem; margin:1.5rem 0; }}
+  .stat {{ background:var(--s); border:1px solid var(--b); border-radius:12px; padding:1.5rem; text-align:center; }}
+  .stat .num {{ font-size:2rem; font-weight:800; color:var(--a); }}
+  .stat .label {{ color:var(--td); font-size:0.85rem; }}
+  a {{ color:var(--a); }}
+  .file-list {{ list-style:none; }}
+  .file-list li {{ padding:0.4rem 0.8rem; border-bottom:1px solid var(--b); }}
+  .file-list li:hover {{ background:var(--s); }}
+  code {{ font-family:'Cascadia Code',monospace; color:var(--a); font-size:0.9rem; }}
+  .search {{ width:100%; padding:0.8rem 1.2rem; background:var(--s); border:1px solid var(--b);
+             border-radius:8px; color:var(--t); font-size:1rem; margin:1rem 0; }}
+  .search::placeholder {{ color:var(--td); }}
+  footer {{ text-align:center; color:var(--td); margin-top:3rem; padding:2rem; border-top:1px solid var(--b); }}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Project Documentation</h1>
+  <p style="color:var(--td)">Auto-generated on {timestamp}</p>
+
+  <div class="stats">
+    <div class="stat"><div class="num">{len(analysis)}</div><div class="label">Files Analyzed</div></div>
+    <div class="stat"><div class="num">{sum(len(a['functions']) for a in analysis.values())}</div><div class="label">Functions</div></div>
+    <div class="stat"><div class="num">{sum(len(a['classes']) for a in analysis.values())}</div><div class="label">Classes</div></div>
+    <div class="stat"><div class="num">{len(chunks)}</div><div class="label">Search Chunks</div></div>
+    <div class="stat"><div class="num">{living_docs.get('tests', 0)}</div><div class="label">Tests</div></div>
+  </div>
+
+  <input class="search" type="text" placeholder="Search documentation..." id="search"
+         oninput="filterFiles(this.value)">
+
+  <h2>Modules</h2>
+  <ul class="file-list" id="file-list">
+"""
+        for filepath in sorted(analysis.keys()):
+            safe_name = filepath.replace(os.sep, '_').replace('.', '_')
+            index_html += f'    <li><a href="{safe_name}.html"><code>{filepath}</code></a></li>\n'
+        index_html += """  </ul>
+</div>
+<footer>Generated by Full-Stack Documentation Pipeline</footer>
+<script>
+function filterFiles(q) {
+  const items = document.querySelectorAll('#file-list li');
+  q = q.toLowerCase();
+  items.forEach(li => { li.style.display = li.textContent.toLowerCase().includes(q) ? '' : 'none'; });
+}
+</script>
+</body></html>"""
+        (site_dir / 'index.html').write_text(index_html, encoding='utf-8')
+        pages_generated += 1
+
+        # ---- Module Pages ----
+        for filepath, items in analysis.items():
+            safe_name = filepath.replace(os.sep, '_').replace('.', '_')
+            page = f"""<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{filepath}</title>
+<style>
+  :root {{ --bg:#0f0f1a; --s:#1a1a2e; --a:#00d4ff; --a2:#7b61ff; --t:#e0e0f0; --td:#8888aa; --b:#2a2a44; }}
+  * {{ margin:0;padding:0;box-sizing:border-box; }}
+  body {{ font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg); color:var(--t); line-height:1.7; }}
+  .container {{ max-width:960px; margin:0 auto; padding:2rem; }}
+  h1 {{ color:var(--a); margin:1rem 0; }}
+  h2 {{ color:var(--a2); margin:1.5rem 0 0.8rem; font-size:1.2rem; }}
+  .back {{ color:var(--a); text-decoration:none; }}
+  .item {{ background:var(--s); border:1px solid var(--b); border-radius:12px; padding:1.5rem; margin:1rem 0; }}
+  .item h3 {{ color:var(--a); margin-bottom:0.5rem; }}
+  .item p {{ color:var(--td); }}
+  code {{ font-family:'Cascadia Code',monospace; color:var(--a); }}
+  footer {{ text-align:center; color:var(--td); margin-top:3rem; padding:2rem; border-top:1px solid var(--b); }}
+</style></head><body>
+<div class="container">
+  <a href="index.html" class="back">&larr; Back to index</a>
+  <h1><code>{filepath}</code></h1>
+  <p style="color:var(--td)">{items['lines']} lines</p>
+"""
+            if items['module_doc']:
+                page += f'  <p style="margin:1rem 0">{items["module_doc"]}</p>\n'
+
+            if items['classes']:
+                page += '  <h2>Classes</h2>\n'
+                for cls in items['classes']:
+                    page += f'  <div class="item"><h3>class {cls["name"]}</h3>\n'
+                    if cls['doc']:
+                        page += f'    <p>{cls["doc"]}</p>\n'
+                    if cls['methods']:
+                        page += f'    <p><strong>Methods:</strong> {", ".join(cls["methods"])}</p>\n'
+                    page += '  </div>\n'
+
+            if items['functions']:
+                page += '  <h2>Functions</h2>\n'
+                for func in items['functions']:
+                    args_str = ', '.join(func['args'])
+                    page += f'  <div class="item"><h3>{func["name"]}({args_str})</h3>\n'
+                    if func['doc']:
+                        page += f'    <p>{func["doc"]}</p>\n'
+                    page += f'    <p style="font-size:0.8rem">Line {func["line"]}</p>\n'
+                    page += '  </div>\n'
+
+            page += """</div>
+<footer>Generated by Full-Stack Documentation Pipeline</footer>
+</body></html>"""
+            (site_dir / f'{safe_name}.html').write_text(page, encoding='utf-8')
+            pages_generated += 1
+
+        stage['pages_generated'] = pages_generated
+        stage['elapsed'] = time.time() - stage['started']
+        self.report['stages'].append(stage)
+        print(f"[stage 5] Site generation: {pages_generated} HTML pages")
+        return pages_generated
+
+    # ---- Orchestrator ----
+
+    def run(self):
+        """Run the full pipeline end-to-end."""
+        print("=" * 60)
+        print("  FULL-STACK DOCUMENTATION PIPELINE")
+        print(f"  Project: {self.project_dir}")
+        print(f"  Output:  {self.output_dir}")
+        print("=" * 60)
+        start = time.time()
+
+        # Stage 1
+        changed = self.stage_change_detection()
+
+        # Stage 2
+        analysis = self.stage_code_analysis(changed if changed else None)
+
+        # Stage 3
+        chunks = self.stage_rag_indexing(analysis)
+
+        # Stage 4
+        living = self.stage_living_docs()
+
+        # Stage 5
+        pages = self.stage_site_generation(analysis, chunks, living)
+
+        # Final report
+        elapsed = time.time() - start
+        self.report['completed'] = datetime.now().isoformat()
+        self.report['elapsed_seconds'] = round(elapsed, 2)
+        self.report['stats'] = {
+            'files_analyzed': len(analysis),
+            'search_chunks': len(chunks),
+            'pages_generated': pages,
+            'errors': len(self.report['errors'])
+        }
+
+        report_path = self.output_dir / 'pipeline-report.json'
+        report_path.write_text(json.dumps(self.report, indent=2))
+
+        print("\n" + "=" * 60)
+        print(f"  PIPELINE COMPLETE in {elapsed:.1f}s")
+        print(f"  Files: {len(analysis)} | Chunks: {len(chunks)} | Pages: {pages}")
+        if self.report['errors']:
+            print(f"  Errors: {len(self.report['errors'])}")
+        print(f"  Report: {report_path}")
+        print(f"  Site:   {self.output_dir / 'site' / 'index.html'}")
+        print("=" * 60)
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Full-Stack Doc Pipeline')
+    parser.add_argument('--project', required=True, help='Project directory')
+    parser.add_argument('--output', default='./docs', help='Output directory')
+    parser.add_argument('--config', help='Optional JSON config file')
+    args = parser.parse_args()
+
+    config = None
+    if args.config:
+        config = json.loads(Path(args.config).read_text())
+
+    pipeline = FullStackDocPipeline(args.project, args.output, config)
+    pipeline.run()
+</code></pre>
+
+    <h2>Docker Support</h2>
+    <pre><code>FROM python:3.12-slim
+WORKDIR /app
+COPY pipelines/6-full-stack/pipeline.py .
+COPY pipelines/6-full-stack/requirements.txt .
+RUN pip install -r requirements.txt
+ENTRYPOINT ["python", "pipeline.py"]</code></pre>
+
+    <h2>GitHub Actions</h2>
+    <pre><code>name: Generate Docs
+on:
+  push:
+    branches: [main]
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install pyyaml chromadb
+      - run: python pipelines/6-full-stack/pipeline.py --project . --output ./docs
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/site</code></pre>
+
+    <h2>Key Features</h2>
+    <ul>
+      <li>5-stage orchestrated pipeline with timing and error reporting</li>
+      <li>Content-hash change detection for incremental builds</li>
+      <li>Full code analysis (AST parsing) with class/function extraction</li>
+      <li>Searchable JSON index for RAG integration</li>
+      <li>Auto-generated HTML site with search functionality</li>
+      <li>Individual module pages with full documentation</li>
+      <li>Docker and GitHub Actions ready</li>
+      <li>JSON pipeline report for auditing</li>
+    </ul>
+
+    </section>
+  </main>
+
+  <footer>
+    <a href="index.html" class="btn btn-outline" style="margin-bottom:1rem;">Back to All Pipelines</a>
+    <p>&copy; 2026 Intelligent Documentation Pipelines</p>
+  </footer>
+
+</body>
+</html>
