@@ -1,12 +1,29 @@
 # Enterprise Tech Operating Atlas
 
-> **S1000D-inspired enterprise technology organisation manual** · Issue 001 · Updated 2026-10-12
+> **S1000D-inspired enterprise technology organisation manual** · Issue 001 · Updated 2026-10-13
 
 **Purpose:** Map the technology functions, decision rights, team hierarchy and delivery hand-offs involved in a modern enterprise Python/API/data/ML stack.
 
 **Scope:** 36 functional roles across 5 groups, from Product and Enterprise Architecture through Frontend, Backend, API Platform, Data Science, MLOps, DevOps, SRE, InfoSec and CISO governance.
 
 **Documentation standard:** This is a *S1000D-inspired* human-readable Markdown manual. Identifiers (for example, `ITM-ORG-005`) are local reference codes, **not compliant S1000D Data Module Codes or S1000D XML**. The writing aims at concise controlled English, but is not a certified ASD-STE100 implementation.
+
+## Interactive operational atlas
+
+**[Open the interactive browser interface](index.html)** — Search 36 roles, inspect hierarchy and escalation, trace 13 connected services, navigate CORS / 502 / reporting / ML drift incidents, and generate draft RACI and change-impact checklists.
+
+- [Interactive guide](modules/ITM-ORG-009-interactive-guide.md)
+- [Structured reference graph](data/atlas.json) (JSON)
+- [Atlas validator](scripts/validate_atlas.py) (Python standard library)
+- [GitHub Actions validation](../../.github/workflows/validate-enterprise-tech-atlas.yml) (repository-root workflow; path shown for reference)
+
+**Local launch** (from repository root):
+
+```bash
+python -m http.server 8000
+```
+
+Then open `http://localhost:8000/manuals/enterprise-tech-operating-atlas/`. Publishing via GitHub Pages requires the repository's Pages settings or a Pages deploy workflow; committing a static page does not automatically publish it.
 
 ## Data module index
 
@@ -18,6 +35,7 @@
 | ITM-ORG-007 | [RACI, controls and incident pathways](modules/ITM-ORG-007-raci-and-escalation.md) |
 | ITM-WEB-CORS-001 | [CORS and API Platform ownership](modules/ITM-WEB-CORS-001.md) |
 | ITM-ORG-008 | [Active recall workbook](modules/ITM-ORG-008-active-recall.md) |
+| ITM-ORG-009 | [Interactive exploration, dependency and impact guide](modules/ITM-ORG-009-interactive-guide.md) |
 
 ## The five organisational groups
 
@@ -73,5 +91,7 @@ All company and scale details are fictional: **IndiaOne Bank**, a hypothetical f
 - [NIST Secure Software Development Framework SP 800-218](https://csrc.nist.gov/pubs/sp/800/218/final)
 - [Google Cloud MLOps architecture guide](https://cloud.google.com/architecture/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning)
 - [Google SRE](https://sre.google/)
+
+**Interactive status:** Static application files and data are committed. GitHub Pages publication is not enabled by this change. Generated RACI is advisory and requires confirmation.
 
 **Maintenance note:** Amend local modules with a version note, date, identified role owner and reviewed RACI if adopted for a real company.
