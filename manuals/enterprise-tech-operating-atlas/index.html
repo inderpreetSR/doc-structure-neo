@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Enterprise Tech Operating Atlas</title>
+<meta name="description" content="Interactive organisation, dependency, incident and RACI atlas.">
+<link rel="stylesheet" href="assets/atlas.css" defer>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><div class="brand"><div class="mark">ET</div><div><strong>Enterprise Tech Operating Atlas</strong><small>ITM-ORG-009 · S1000D-inspired · Issue 001</small></div></div><a class="source" href="README.md">Technical manual ↗</a></header>
+<main id="main">
+<section class="intro"><p class="eyebrow">TECHNOLOGY OPERATING MODEL</p><h1>Know the team. Trace the system.<br><span>Own the outcome.</span></h1><p>Explore engineering ownership, upstream/downstream service dependencies and controlled change pathways. All examples use the fictional IndiaOne Bank.</p><div class="stats" id="stats"><span>Loading atlas data…</span></div></section>
+<nav class="tabs" aria-label="Atlas workspaces"><button class="active" data-tab="org" aria-selected="true">01 · Organisation</button><button data-tab="dependency" aria-selected="false">02 · Dependencies</button><button data-tab="incident" aria-selected="false">03 · Incidents</button><button data-tab="change" aria-selected="false">04 · Change & RACI</button></nav>
+<div id="loading" role="status" class="status">Loading structured data…</div>
+<section id="org" class="workspace active" aria-label="Organisation map">
+<div class="section-head"><div><p class="eyebrow">PEOPLE & OWNERSHIP</p><h2>Organisation explorer</h2><p>Select a role to inspect hierarchy, collaborators, escalation owners and the services it supports.</p></div></div>
+<div class="two"><aside class="panel"><label for="role-search">Search roles</label><input id="role-search" type="search" placeholder="API platform, AppSec, MLOps…"><label for="role-group">Functional group</label><select id="role-group"><option value="">All groups</option></select><div id="role-list" class="scroll-list" role="listbox" aria-label="Roles"></div></aside><article class="panel" id="role-detail" aria-live="polite"></article></div>
+</section>
+<section id="dependency" class="workspace" aria-label="Dependency explorer"><div class="section-head"><div><p class="eyebrow">SYSTEM & SEMANTIC FLOW</p><h2>Dependency explorer</h2><p>Click a service, follow its upstream/downstream connections and inspect API/data contracts.</p></div></div><div class="two"><aside class="panel"><label for="system-search">Search systems</label><input id="system-search" type="search" placeholder="LOS, LMS, Python, warehouse…"><div id="system-list" class="scroll-list" role="listbox" aria-label="Services"></div></aside><article class="panel"><div id="system-detail" aria-live="polite"></div><h3>Connected pathway</h3><div id="system-path" class="pathway"></div><div class="diagram-actions"><button id="copy-mermaid" class="secondary">Copy Mermaid source</button></div><pre id="mermaid-output" class="code" aria-label="Mermaid dependency diagram"></pre></article></div></section>
+<section id="incident" class="workspace" aria-label="Incident ownership"><div class="section-head"><div><p class="eyebrow">TRIAGE & ESCALATION</p><h2>Incident ownership navigator</h2><p>Choose a symptom to identify initial investigators, required checks and escalation pathways.</p></div></div><div class="incident-grid" id="incident-list"></div><article class="panel detail-full" id="incident-detail" aria-live="polite"></article></section>
+<section id="change" class="workspace" aria-label="RACI and change impact"><div class="section-head"><div><p class="eyebrow">CONTROLLED CHANGE</p><h2>Change-impact & RACI generator</h2><p>Generate a transparent proposal from reference rules. <strong>All assignments require human review.</strong></p></div></div><div class="panel form-panel"><div class="form-row"><div><label for="change-title">Change title</label><input id="change-title" placeholder="e.g. Update LOS sent-back status mapping" maxlength="160"></div><div><label for="change-type">Template</label><select id="change-type"></select></div></div><label for="change-description">Business / technical change</label><textarea id="change-description" rows="4" placeholder="Describe affected journeys, systems, customers, data fields and expected outcome. No customer-identifying information."></textarea><div class="actions"><button id="detect-template" class="secondary">Suggest template from text</button><button id="generate-change" class="primary">Generate proposal</button><span class="hint">Runs locally in your browser. No AI endpoint.</span></div><div id="change-result" aria-live="polite"></div></div></section>
+<div class="footnote"><strong>Reference use only.</strong> Organisational reporting, security approvals, severity and RACI assignments vary by institution. No customer data is processed. S1000D-inspired Markdown; not certified or official S1000D XML.</div>
+</main>
+<footer>Enterprise Tech Operating Atlas · <a href="README.md">Read the manual</a> · <a href="data/atlas.json">Structured data</a></footer>
+<script src="assets/atlas.js" defer></script>
+</body></html>
