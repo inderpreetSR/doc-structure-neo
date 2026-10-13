@@ -1,0 +1,1439 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-10-13",
+  "project": "Enterprise Tech Operating Atlas",
+  "note": "Illustrative only. IndiaOne Bank is fictional. Roles/owners are not your organisation's real assignments.",
+  "groups": [
+    {
+      "id": "ORG-01",
+      "name": "Business, Product & Architecture"
+    },
+    {
+      "id": "ORG-02",
+      "name": "Application & API Engineering"
+    },
+    {
+      "id": "ORG-03",
+      "name": "Data, Analytics & ML"
+    },
+    {
+      "id": "ORG-04",
+      "name": "Infrastructure, Cloud & Operations"
+    },
+    {
+      "id": "ORG-05",
+      "name": "Information & Cybersecurity"
+    }
+  ],
+  "roles": [
+    {
+      "id": "business",
+      "name": "Business Owner",
+      "group": "ORG-01",
+      "responsibility": "Defines process outcomes, policy rules and business acceptance.",
+      "reportsTo": "Head of Business",
+      "hierarchy": "Process Owner → Business Head → VP Business → COO",
+      "collaborates": [
+        "product",
+        "ba",
+        "analytics"
+      ],
+      "escalation": "Business Head"
+    },
+    {
+      "id": "product",
+      "name": "Product Manager / Owner",
+      "group": "ORG-01",
+      "responsibility": "Owns journey priorities, roadmap, backlog and acceptance criteria.",
+      "reportsTo": "Head of Product",
+      "hierarchy": "Associate PM → PM → Senior PM → Group PM → Director → CPO",
+      "collaborates": [
+        "business",
+        "ba",
+        "frontend",
+        "backend"
+      ],
+      "escalation": "Product Director"
+    },
+    {
+      "id": "ba",
+      "name": "Business Analyst",
+      "group": "ORG-01",
+      "responsibility": "Maps processes into traceable functional requirements and state rules.",
+      "reportsTo": "BA Manager",
+      "hierarchy": "Junior BA → BA → Senior BA → BA Lead → BA Manager",
+      "collaborates": [
+        "business",
+        "product",
+        "integration",
+        "analytics"
+      ],
+      "escalation": "BA Manager"
+    },
+    {
+      "id": "enterprise_arch",
+      "name": "Enterprise Architect",
+      "group": "ORG-01",
+      "responsibility": "Sets cross-enterprise technology standards, target state and governance.",
+      "reportsTo": "Head of Enterprise Architecture",
+      "hierarchy": "Architect → Senior → Principal → Head of EA",
+      "collaborates": [
+        "solution_arch",
+        "platform",
+        "security_arch"
+      ],
+      "escalation": "Chief Architect"
+    },
+    {
+      "id": "solution_arch",
+      "name": "Solution Architect",
+      "group": "ORG-01",
+      "responsibility": "Defines service boundaries, contracts, dependencies and non-functional requirements.",
+      "reportsTo": "Head of Architecture",
+      "hierarchy": "Architect → Senior → Lead → Principal → Head of Architecture",
+      "collaborates": [
+        "backend",
+        "api_platform",
+        "integration",
+        "security_arch"
+      ],
+      "escalation": "Architecture Director"
+    },
+    {
+      "id": "tech_lead",
+      "name": "Technical Lead",
+      "group": "ORG-01",
+      "responsibility": "Directs design decisions, engineering quality and implementation mentoring.",
+      "reportsTo": "Engineering Manager or IC ladder",
+      "hierarchy": "Senior Engineer → Tech Lead → Staff / Principal → Distinguished",
+      "collaborates": [
+        "backend",
+        "frontend",
+        "devops",
+        "sre"
+      ],
+      "escalation": "Engineering Manager or Principal"
+    },
+    {
+      "id": "delivery",
+      "name": "Project / Delivery Manager",
+      "group": "ORG-01",
+      "responsibility": "Coordinates cross-team milestones, risk, sequencing and change delivery.",
+      "reportsTo": "Delivery Director",
+      "hierarchy": "Coordinator → Project Manager → Programme Manager → Delivery Director",
+      "collaborates": [
+        "product",
+        "devops",
+        "qa",
+        "infra"
+      ],
+      "escalation": "Delivery Director"
+    },
+    {
+      "id": "ux",
+      "name": "UX / UI Design",
+      "group": "ORG-02",
+      "responsibility": "Designs accessible customer and employee interfaces.",
+      "reportsTo": "Design Lead",
+      "hierarchy": "Junior Designer → Designer → Senior → Design Lead → Head of Design",
+      "collaborates": [
+        "frontend",
+        "product"
+      ],
+      "escalation": "Head of Design"
+    },
+    {
+      "id": "frontend",
+      "name": "Frontend Engineering",
+      "group": "ORG-02",
+      "responsibility": "Builds web/mobile screens and browser-side API integration.",
+      "reportsTo": "Frontend Engineering Manager",
+      "hierarchy": "Junior FE → FE → Senior FE → Frontend Lead → Manager",
+      "collaborates": [
+        "backend",
+        "api_platform",
+        "ux",
+        "qa"
+      ],
+      "escalation": "Frontend Lead → Engineering Manager"
+    },
+    {
+      "id": "backend",
+      "name": "Backend Engineering",
+      "group": "ORG-02",
+      "responsibility": "Implements Python FastAPI business services, validation and authorisation.",
+      "reportsTo": "Backend Engineering Manager",
+      "hierarchy": "Junior BE → Python BE → Senior BE → Backend Lead → Manager",
+      "collaborates": [
+        "frontend",
+        "api_platform",
+        "integration",
+        "ml_engineering"
+      ],
+      "escalation": "Backend Lead → Engineering Manager"
+    },
+    {
+      "id": "integration",
+      "name": "Integration Engineering",
+      "group": "ORG-02",
+      "responsibility": "Maps API/events, retries and delivery between LOS, LMS and services.",
+      "reportsTo": "Integration Manager",
+      "hierarchy": "Integration Developer → Senior → Lead → Manager → Head of Integration",
+      "collaborates": [
+        "backend",
+        "api_platform",
+        "data_eng",
+        "ba"
+      ],
+      "escalation": "Integration Lead → Manager"
+    },
+    {
+      "id": "api_platform",
+      "name": "API Platform Engineering",
+      "group": "ORG-02",
+      "responsibility": "Owns shared gateway routes, CORS configuration where applicable, throttling and API observability.",
+      "reportsTo": "Head of API Platform",
+      "hierarchy": "API Engineer → Senior → API Platform Lead → Manager → Head",
+      "collaborates": [
+        "backend",
+        "frontend",
+        "integration",
+        "appsec",
+        "sre"
+      ],
+      "escalation": "API Platform Lead → API Platform Manager"
+    },
+    {
+      "id": "qa",
+      "name": "QA / Test Automation",
+      "group": "ORG-02",
+      "responsibility": "Validates contracts, features, regression, SIT and test evidence.",
+      "reportsTo": "QA Manager",
+      "hierarchy": "QA Analyst → SDET → Senior QA → QA Lead → QA Manager",
+      "collaborates": [
+        "frontend",
+        "backend",
+        "product",
+        "devops"
+      ],
+      "escalation": "QA Lead → QA Manager"
+    },
+    {
+      "id": "data_eng",
+      "name": "Data Engineering",
+      "group": "ORG-03",
+      "responsibility": "Builds validated ingestion, transformation and curated data pipelines.",
+      "reportsTo": "Head of Data Engineering",
+      "hierarchy": "Junior DE → DE → Senior DE → Lead → Manager → Head",
+      "collaborates": [
+        "data_platform",
+        "analytics",
+        "ds",
+        "integration"
+      ],
+      "escalation": "Data Engineering Lead → Manager"
+    },
+    {
+      "id": "data_platform",
+      "name": "Data Platform Engineering",
+      "group": "ORG-03",
+      "responsibility": "Runs warehouse/lake, orchestration, ingestion infrastructure and shared data services.",
+      "reportsTo": "Head of Data Platform",
+      "hierarchy": "Engineer → Senior → Lead → Manager → Head of Data Platform",
+      "collaborates": [
+        "data_eng",
+        "dba",
+        "infra",
+        "cloud"
+      ],
+      "escalation": "Data Platform Lead → Manager"
+    },
+    {
+      "id": "dba",
+      "name": "DBA / Database Engineering",
+      "group": "ORG-03",
+      "responsibility": "Owns operational database health, backups, access and performance.",
+      "reportsTo": "Database Services Manager",
+      "hierarchy": "Junior DBA → DBA → Senior → DBA Lead → Manager",
+      "collaborates": [
+        "backend",
+        "data_platform",
+        "infra"
+      ],
+      "escalation": "DBA Lead → Database Manager"
+    },
+    {
+      "id": "analytics",
+      "name": "BI / Analytics Engineering",
+      "group": "ORG-03",
+      "responsibility": "Defines metrics, grains, reconciliations, semantic models and reporting.",
+      "reportsTo": "Head of Analytics",
+      "hierarchy": "Analyst → Senior → Analytics Lead → Manager → Head",
+      "collaborates": [
+        "ba",
+        "data_eng",
+        "business",
+        "product"
+      ],
+      "escalation": "Analytics Lead → Head of Analytics"
+    },
+    {
+      "id": "ds",
+      "name": "Data Science",
+      "group": "ORG-03",
+      "responsibility": "Designs features, experiments, prediction models and statistical validation.",
+      "reportsTo": "Head of Data Science",
+      "hierarchy": "Junior DS → DS → Senior DS → Lead / Principal → Head",
+      "collaborates": [
+        "data_eng",
+        "ml_engineering",
+        "mlops",
+        "model_risk"
+      ],
+      "escalation": "Data Science Lead → Model Owner"
+    },
+    {
+      "id": "ml_engineering",
+      "name": "ML Engineering",
+      "group": "ORG-03",
+      "responsibility": "Builds reliable model-serving software and model-based product features.",
+      "reportsTo": "ML Engineering Manager",
+      "hierarchy": "ML Engineer → Senior → ML Lead → Manager → Head",
+      "collaborates": [
+        "backend",
+        "ds",
+        "mlops",
+        "sre"
+      ],
+      "escalation": "ML Technical Lead → ML Manager"
+    },
+    {
+      "id": "mlops",
+      "name": "MLOps Engineering",
+      "group": "ORG-03",
+      "responsibility": "Automates experiment tracking, model registry, release and prediction monitoring.",
+      "reportsTo": "ML Platform Manager",
+      "hierarchy": "MLOps Engineer → Senior → MLOps Lead → Manager → Head",
+      "collaborates": [
+        "ml_engineering",
+        "ds",
+        "devops",
+        "sre"
+      ],
+      "escalation": "MLOps Lead → ML Platform Manager"
+    },
+    {
+      "id": "model_risk",
+      "name": "Model Risk / Validation",
+      "group": "ORG-03",
+      "responsibility": "Provides independent model challenge, validation and risk oversight where required.",
+      "reportsTo": "Head of Model Risk",
+      "hierarchy": "Validator → Senior → Lead → Manager → Head of Model Risk",
+      "collaborates": [
+        "ds",
+        "mlops",
+        "grc",
+        "business"
+      ],
+      "escalation": "Model Risk Lead → Head of Model Risk"
+    },
+    {
+      "id": "infra",
+      "name": "Infrastructure Operations",
+      "group": "ORG-04",
+      "responsibility": "Operates compute, OS, backup, servers, storage and recovery.",
+      "reportsTo": "Head of Infrastructure",
+      "hierarchy": "System Admin → Senior → Infra Lead → Manager → Head",
+      "collaborates": [
+        "network",
+        "cloud",
+        "infra_sec",
+        "sre"
+      ],
+      "escalation": "Infrastructure Lead → Head of Infrastructure"
+    },
+    {
+      "id": "cloud",
+      "name": "Cloud Engineering",
+      "group": "ORG-04",
+      "responsibility": "Provisions governed AWS/Azure/GCP resources and cloud connectivity.",
+      "reportsTo": "Head of Cloud",
+      "hierarchy": "Cloud Engineer → Senior → Architect/Lead → Manager → Head",
+      "collaborates": [
+        "infra",
+        "platform",
+        "infra_sec",
+        "devops"
+      ],
+      "escalation": "Cloud Lead → Cloud Manager"
+    },
+    {
+      "id": "network",
+      "name": "Network Engineering",
+      "group": "ORG-04",
+      "responsibility": "Manages DNS, routing, connectivity, load balancers, private networks.",
+      "reportsTo": "Head of Networks",
+      "hierarchy": "Network Engineer → Senior → Lead → Manager → Head",
+      "collaborates": [
+        "infra",
+        "api_platform",
+        "infra_sec"
+      ],
+      "escalation": "Network Lead → Network Manager"
+    },
+    {
+      "id": "devops",
+      "name": "DevOps Engineering",
+      "group": "ORG-04",
+      "responsibility": "Implements CI/CD, release automation, deployments and shared build tooling.",
+      "reportsTo": "DevOps Manager",
+      "hierarchy": "DevOps Engineer → Senior → Lead → Manager → Head",
+      "collaborates": [
+        "backend",
+        "platform",
+        "appsec",
+        "sre"
+      ],
+      "escalation": "DevOps Lead → DevOps Manager"
+    },
+    {
+      "id": "platform",
+      "name": "Platform Engineering",
+      "group": "ORG-04",
+      "responsibility": "Builds self-service developer platforms and common runtime capabilities.",
+      "reportsTo": "Head of Platform Engineering",
+      "hierarchy": "Platform Engineer → Senior → Lead → Manager → Head",
+      "collaborates": [
+        "devops",
+        "cloud",
+        "api_platform",
+        "sre"
+      ],
+      "escalation": "Platform Lead → Head of Platform"
+    },
+    {
+      "id": "sre",
+      "name": "Site Reliability Engineering",
+      "group": "ORG-04",
+      "responsibility": "Owns reliability practices, SLOs, telemetry, on-call and recovery patterns.",
+      "reportsTo": "Head of Reliability",
+      "hierarchy": "SRE → Senior SRE → Lead → Manager → Head",
+      "collaborates": [
+        "api_platform",
+        "backend",
+        "prod_support",
+        "mlops"
+      ],
+      "escalation": "SRE On-call → Incident Commander"
+    },
+    {
+      "id": "prod_support",
+      "name": "Production Support / IT Operations",
+      "group": "ORG-04",
+      "responsibility": "Triage live incidents, carry out runbooks and coordinate restoration.",
+      "reportsTo": "Head of IT Operations",
+      "hierarchy": "Support Engineer → L2/L3 → Support Lead → Ops Manager → Head",
+      "collaborates": [
+        "sre",
+        "backend",
+        "integration",
+        "infra"
+      ],
+      "escalation": "Support Lead → Incident Manager"
+    },
+    {
+      "id": "appsec",
+      "name": "Application Security (AppSec)",
+      "group": "ORG-05",
+      "responsibility": "Threat-models apps/APIs and reviews secure software controls and exceptions.",
+      "reportsTo": "Head of AppSec",
+      "hierarchy": "AppSec Analyst → Engineer → Senior → Lead → Manager → Head",
+      "collaborates": [
+        "backend",
+        "api_platform",
+        "devsecops",
+        "security_arch"
+      ],
+      "escalation": "AppSec Lead → Head of AppSec"
+    },
+    {
+      "id": "infra_sec",
+      "name": "Infrastructure Security (InfraSec)",
+      "group": "ORG-05",
+      "responsibility": "Assures cloud, host, network and workload configurations.",
+      "reportsTo": "Head of Infrastructure Security",
+      "hierarchy": "Security Engineer → Senior → InfraSec Lead → Manager → Head",
+      "collaborates": [
+        "infra",
+        "network",
+        "cloud",
+        "soc"
+      ],
+      "escalation": "InfraSec Lead → Head of InfraSec"
+    },
+    {
+      "id": "iam",
+      "name": "Identity & Privileged Access (IAM / PAM)",
+      "group": "ORG-05",
+      "responsibility": "Manages workforce/service identities, least privilege and privileged sessions.",
+      "reportsTo": "Head of IAM",
+      "hierarchy": "IAM Analyst → Engineer → Senior → Lead → Manager → Head",
+      "collaborates": [
+        "api_platform",
+        "appsec",
+        "soc"
+      ],
+      "escalation": "IAM Lead → Head of IAM"
+    },
+    {
+      "id": "soc",
+      "name": "Security Operations Centre (SOC)",
+      "group": "ORG-05",
+      "responsibility": "Detects, triages and responds to security incidents.",
+      "reportsTo": "SOC Head",
+      "hierarchy": "SOC L1 → L2 → L3 / Incident Lead → SOC Manager → Head",
+      "collaborates": [
+        "iam",
+        "infra_sec",
+        "appsec",
+        "grc"
+      ],
+      "escalation": "SOC Incident Lead → SOC Head"
+    },
+    {
+      "id": "devsecops",
+      "name": "DevSecOps Engineering",
+      "group": "ORG-05",
+      "responsibility": "Builds security scanning, guardrails and policy checks into delivery.",
+      "reportsTo": "Head of DevSecOps",
+      "hierarchy": "DevSecOps Engineer → Senior → Lead → Manager → Head",
+      "collaborates": [
+        "devops",
+        "appsec",
+        "platform"
+      ],
+      "escalation": "DevSecOps Lead → Manager"
+    },
+    {
+      "id": "security_arch",
+      "name": "Security Architecture",
+      "group": "ORG-05",
+      "responsibility": "Defines security patterns, threat models and risk mitigations.",
+      "reportsTo": "Head of Security Architecture",
+      "hierarchy": "Security Architect → Senior → Principal → Head",
+      "collaborates": [
+        "solution_arch",
+        "appsec",
+        "infra_sec",
+        "grc"
+      ],
+      "escalation": "Head of Security Architecture"
+    },
+    {
+      "id": "grc",
+      "name": "Governance, Risk & Compliance (GRC)",
+      "group": "ORG-05",
+      "responsibility": "Manages security risk, audit evidence, policies and compliance controls.",
+      "reportsTo": "Head of Security GRC",
+      "hierarchy": "GRC Analyst → Senior → Lead → Manager → Head",
+      "collaborates": [
+        "model_risk",
+        "soc",
+        "security_arch",
+        "ciso"
+      ],
+      "escalation": "GRC Lead → Head of GRC"
+    },
+    {
+      "id": "ciso",
+      "name": "CISO Office",
+      "group": "ORG-05",
+      "responsibility": "Leads enterprise security strategy, significant risk oversight and exception delegation.",
+      "reportsTo": "CEO / Board or designated executive",
+      "hierarchy": "Security Management → Security Director / Deputy CISO → CISO",
+      "collaborates": [
+        "grc",
+        "appsec",
+        "infra_sec",
+        "soc"
+      ],
+      "escalation": "CISO / Executive Risk Committee"
+    }
+  ],
+  "systems": [
+    {
+      "id": "portal",
+      "name": "Customer / LOS Portal",
+      "owner": "frontend",
+      "businessOwner": "Product / Credit Operations",
+      "upstream": [],
+      "purpose": "Customer and employee web journeys.",
+      "contracts": [
+        "origin, bearer/session token"
+      ],
+      "aliases": [
+        "web",
+        "los"
+      ],
+      "downstream": [
+        "gateway"
+      ]
+    },
+    {
+      "id": "iam_service",
+      "name": "Identity Service",
+      "owner": "iam",
+      "businessOwner": "IT Security",
+      "upstream": [],
+      "purpose": "Machine and workforce authentication / token verification.",
+      "contracts": [
+        "OIDC/JWT claims"
+      ],
+      "aliases": [
+        "auth"
+      ],
+      "downstream": [
+        "gateway"
+      ]
+    },
+    {
+      "id": "gateway",
+      "name": "API Gateway",
+      "owner": "api_platform",
+      "businessOwner": "Digital Product",
+      "upstream": [
+        "portal",
+        "iam_service"
+      ],
+      "purpose": "Routes APIs and applies origin, access and request policies.",
+      "contracts": [
+        "HTTP/OpenAPI, origin allowlist, request IDs"
+      ],
+      "aliases": [
+        "api",
+        "cors"
+      ],
+      "downstream": [
+        "backend"
+      ]
+    },
+    {
+      "id": "bureau",
+      "name": "External Bureau Connector",
+      "owner": "integration",
+      "businessOwner": "Credit Policy",
+      "upstream": [],
+      "purpose": "Third-party credit data interface.",
+      "contracts": [
+        "bureau response version, consent"
+      ],
+      "aliases": [
+        "credit",
+        "external"
+      ],
+      "downstream": [
+        "backend"
+      ]
+    },
+    {
+      "id": "ml_service",
+      "name": "ML Prediction Service",
+      "owner": "ml_engineering",
+      "businessOwner": "Credit Risk / Model Owner",
+      "upstream": [
+        "feature_store"
+      ],
+      "purpose": "Model inference and score response.",
+      "contracts": [
+        "feature schema v1, score schema v1"
+      ],
+      "aliases": [
+        "ml",
+        "model",
+        "python"
+      ],
+      "downstream": [
+        "backend"
+      ]
+    },
+    {
+      "id": "backend",
+      "name": "Python Eligibility API",
+      "owner": "backend",
+      "businessOwner": "Credit Product",
+      "upstream": [
+        "gateway",
+        "bureau",
+        "ml_service"
+      ],
+      "purpose": "Validates inputs, orchestrates rules and enforces loan-level authorisation.",
+      "contracts": [
+        "OpenAPI v1, eligibility decision contract"
+      ],
+      "aliases": [
+        "fastapi",
+        "loan"
+      ],
+      "downstream": [
+        "los"
+      ]
+    },
+    {
+      "id": "los",
+      "name": "Loan Origination System (LOS)",
+      "owner": "backend",
+      "businessOwner": "Loan Operations / Credit",
+      "upstream": [
+        "backend"
+      ],
+      "purpose": "Origination, workflow, send-back and sanction states.",
+      "contracts": [
+        "case state v1, loan_application_id"
+      ],
+      "aliases": [
+        "origination",
+        "sent-back",
+        "sent back"
+      ],
+      "downstream": [
+        "eventbus",
+        "data_pipe"
+      ]
+    },
+    {
+      "id": "eventbus",
+      "name": "Integration Events",
+      "owner": "integration",
+      "businessOwner": "Technology Integration",
+      "upstream": [
+        "los"
+      ],
+      "purpose": "Transfers business state events with retry and idempotency controls.",
+      "contracts": [
+        "case_event v1, correlation_id"
+      ],
+      "aliases": [
+        "middleware",
+        "queue",
+        "event"
+      ],
+      "downstream": [
+        "lms"
+      ]
+    },
+    {
+      "id": "lms",
+      "name": "Loan Management System (LMS)",
+      "owner": "integration",
+      "businessOwner": "Loan Operations / Servicing",
+      "upstream": [
+        "eventbus"
+      ],
+      "purpose": "Processes servicing / accepted state transitions, subject to workflow rules.",
+      "contracts": [
+        "account status v1, loan_account_id"
+      ],
+      "aliases": [
+        "loan management",
+        "servicing"
+      ],
+      "downstream": [
+        "data_pipe"
+      ]
+    },
+    {
+      "id": "data_pipe",
+      "name": "Data Pipeline",
+      "owner": "data_eng",
+      "businessOwner": "Data Platform / Analytics",
+      "upstream": [
+        "los",
+        "lms"
+      ],
+      "purpose": "Ingests application and servicing events; reconciles status history.",
+      "contracts": [
+        "event timestamp, status mapping, grain"
+      ],
+      "aliases": [
+        "airflow",
+        "etl",
+        "sync"
+      ],
+      "downstream": [
+        "warehouse"
+      ]
+    },
+    {
+      "id": "warehouse",
+      "name": "Enterprise Data Warehouse",
+      "owner": "data_platform",
+      "businessOwner": "Data & Analytics",
+      "upstream": [
+        "data_pipe"
+      ],
+      "purpose": "Curated analytical models and loan reporting data.",
+      "contracts": [
+        "loan mart v1, status dimension"
+      ],
+      "aliases": [
+        "redshift",
+        "dwh",
+        "mart"
+      ],
+      "downstream": [
+        "feature_store",
+        "dashboard"
+      ]
+    },
+    {
+      "id": "feature_store",
+      "name": "ML Feature Serving",
+      "owner": "mlops",
+      "businessOwner": "Model Owner / Data Science",
+      "upstream": [
+        "warehouse"
+      ],
+      "purpose": "Provides reproducible, validated features for model inference.",
+      "contracts": [
+        "feature schema v1, freshness SLAs"
+      ],
+      "aliases": [
+        "features",
+        "mlops"
+      ],
+      "downstream": [
+        "ml_service"
+      ]
+    },
+    {
+      "id": "dashboard",
+      "name": "Loan Reporting Dashboard",
+      "owner": "analytics",
+      "businessOwner": "Credit Operations / Product",
+      "upstream": [
+        "warehouse"
+      ],
+      "purpose": "KPIs, TAT, case reconciliation and performance reporting.",
+      "contracts": [
+        "report metric definitions, grain"
+      ],
+      "aliases": [
+        "bi",
+        "kpi",
+        "reporting"
+      ],
+      "downstream": []
+    }
+  ],
+  "incidents": [
+    {
+      "id": "cors",
+      "name": "CORS / blocked browser response",
+      "symptom": "Browser cannot read an API response but a direct authorised API client works.",
+      "primary": "api_platform",
+      "consult": [
+        "frontend",
+        "backend",
+        "appsec"
+      ],
+      "severity": "Assess customer impact and affected origin; no default incident severity.",
+      "checks": [
+        "Capture origin, URL, method and browser console message.",
+        "Check OPTIONS preflight status, response headers and redirects.",
+        "Identify gateway/backend/proxy policy owner before changing configuration.",
+        "Confirm approved origin allowlist and credential rules."
+      ],
+      "escalation": [
+        "API Platform Lead or backend service owner",
+        "AppSec for exceptions; incident manager if broad impact"
+      ],
+      "systems": [
+        "portal",
+        "gateway",
+        "backend"
+      ],
+      "safety": "CORS is not authentication or customer-level authorisation."
+    },
+    {
+      "id": "http502",
+      "name": "502 / 504 gateway failure",
+      "symptom": "API gateway reports bad gateway or timeout for a Python service.",
+      "primary": "api_platform",
+      "consult": [
+        "backend",
+        "sre",
+        "network"
+      ],
+      "severity": "Assign severity from outage scope, dependency and customer impact.",
+      "checks": [
+        "Check gateway upstream target, DNS and routing.",
+        "Inspect Python service health, application exceptions and timeouts.",
+        "Check recent deployment, ingress, TLS and upstream port.",
+        "Correlate logs with trace/request ID."
+      ],
+      "escalation": [
+        "API Platform on-call + Backend Lead",
+        "SRE incident commander → Engineering Manager / Director"
+      ],
+      "systems": [
+        "gateway",
+        "backend",
+        "los"
+      ],
+      "safety": "A successful deploy does not prove a healthy upstream service."
+    },
+    {
+      "id": "data_mismatch",
+      "name": "LOS / LMS / reporting mismatch",
+      "symptom": "Sent-back cases or state counts do not agree between systems and reporting.",
+      "primary": "integration",
+      "consult": [
+        "ba",
+        "backend",
+        "data_eng",
+        "analytics"
+      ],
+      "severity": "Assess whether workflow, financial or regulatory reporting is affected.",
+      "checks": [
+        "Confirm business rules: should this state reach LMS?",
+        "Compare LOS case state/time with published event and correlation ID.",
+        "Check integration delivery, retries, rejected messages and LMS acceptance.",
+        "Reconcile source-to-mart grain, effective dates, mapping and refresh lag."
+      ],
+      "escalation": [
+        "Product/BA process owner + LOS/LMS Integration Lead",
+        "Cross-team Delivery Manager → Data/Technology Director"
+      ],
+      "systems": [
+        "los",
+        "eventbus",
+        "lms",
+        "data_pipe",
+        "warehouse",
+        "dashboard"
+      ],
+      "safety": "An HTTP 200 does not mean semantic consistency."
+    },
+    {
+      "id": "ml_drift",
+      "name": "ML drift / degraded predictions",
+      "symptom": "Predictive quality, score distribution or model input distributions change.",
+      "primary": "mlops",
+      "consult": [
+        "ds",
+        "ml_engineering",
+        "data_eng",
+        "model_risk"
+      ],
+      "severity": "Check decision materiality and model risk classification.",
+      "checks": [
+        "Check availability and freshness of inference features.",
+        "Compare live input schema, missingness and feature distributions with training.",
+        "Evaluate ground-truth performance only when labels are available.",
+        "Review deployment/model version, thresholds and approved rollback rules."
+      ],
+      "escalation": [
+        "MLOps Lead + Model Owner",
+        "Model Risk / Validation and ML Platform Manager"
+      ],
+      "systems": [
+        "warehouse",
+        "feature_store",
+        "ml_service",
+        "backend"
+      ],
+      "safety": "Input drift alone does not establish that predictive performance declined."
+    }
+  ],
+  "templates": [
+    {
+      "id": "process",
+      "name": "Business / LOS–LMS process change",
+      "keywords": [
+        "process",
+        "workflow",
+        "status",
+        "send back",
+        "sent back",
+        "returned",
+        "los",
+        "lms",
+        "disbursal",
+        "tat"
+      ],
+      "defaultSystems": [
+        "los",
+        "eventbus",
+        "lms",
+        "data_pipe",
+        "warehouse",
+        "dashboard"
+      ],
+      "checks": [
+        "Approve the state-transition definition and acceptance criteria.",
+        "Validate source-to-target status mapping and idempotency.",
+        "Complete SIT for events, retries and exceptional states.",
+        "Run business UAT on journey/TAT and downstream dashboard numbers.",
+        "Reconcile loan/case grain, refresh timing and history.",
+        "Confirm rollback and cross-team release communications."
+      ],
+      "raci": [
+        {
+          "task": "Define changed business state",
+          "r": "ba",
+          "a": "product",
+          "c": [
+            "business",
+            "backend"
+          ],
+          "i": [
+            "analytics"
+          ]
+        },
+        {
+          "task": "Implement LOS / LMS integration",
+          "r": "integration",
+          "a": "backend",
+          "c": [
+            "api_platform",
+            "ba"
+          ],
+          "i": [
+            "product"
+          ]
+        },
+        {
+          "task": "Validate reporting impact",
+          "r": "data_eng",
+          "a": "analytics",
+          "c": [
+            "ba",
+            "integration"
+          ],
+          "i": [
+            "business"
+          ]
+        },
+        {
+          "task": "Production release and monitoring",
+          "r": "devops",
+          "a": "delivery",
+          "c": [
+            "qa",
+            "sre"
+          ],
+          "i": [
+            "product"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "api",
+      "name": "API / Python service change",
+      "keywords": [
+        "api",
+        "endpoint",
+        "gateway",
+        "cors",
+        "python",
+        "fastapi",
+        "502",
+        "503",
+        "timeout",
+        "authentication",
+        "route"
+      ],
+      "defaultSystems": [
+        "portal",
+        "gateway",
+        "backend",
+        "los"
+      ],
+      "checks": [
+        "Review OpenAPI contract, consumers and compatibility.",
+        "Confirm CORS origin and authentication/authorisation rules separately.",
+        "Test errors, retries, timeouts and rate limits.",
+        "Run API regression, penetration/security checks as policy requires.",
+        "Validate deployment health, traces, SLOs and rollback."
+      ],
+      "raci": [
+        {
+          "task": "Service/API design",
+          "r": "backend",
+          "a": "solution_arch",
+          "c": [
+            "api_platform",
+            "appsec"
+          ],
+          "i": [
+            "product"
+          ]
+        },
+        {
+          "task": "Gateway and routing configuration",
+          "r": "api_platform",
+          "a": "api_platform",
+          "c": [
+            "backend",
+            "infra_sec"
+          ],
+          "i": [
+            "sre"
+          ]
+        },
+        {
+          "task": "Application test and security",
+          "r": "qa",
+          "a": "backend",
+          "c": [
+            "appsec",
+            "frontend"
+          ],
+          "i": [
+            "product"
+          ]
+        },
+        {
+          "task": "Release and observability",
+          "r": "devops",
+          "a": "sre",
+          "c": [
+            "api_platform",
+            "backend"
+          ],
+          "i": [
+            "delivery"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "data",
+      "name": "Data contract / reporting change",
+      "keywords": [
+        "report",
+        "data",
+        "dashboard",
+        "sql",
+        "redshift",
+        "etl",
+        "pipeline",
+        "sync",
+        "mart",
+        "grain",
+        "kpi",
+        "schema"
+      ],
+      "defaultSystems": [
+        "data_pipe",
+        "warehouse",
+        "dashboard"
+      ],
+      "checks": [
+        "Confirm metric definitions, grain and denominator.",
+        "Identify upstream field contracts, owners and effective dates.",
+        "Check nulls, duplicates, late events and source reconciliation.",
+        "Run data quality tests, backfill plan and rollback.",
+        "Sign off reporting before/after comparisons."
+      ],
+      "raci": [
+        {
+          "task": "Define metrics and grain",
+          "r": "analytics",
+          "a": "business",
+          "c": [
+            "ba",
+            "data_eng"
+          ],
+          "i": [
+            "product"
+          ]
+        },
+        {
+          "task": "Implement transformation",
+          "r": "data_eng",
+          "a": "data_platform",
+          "c": [
+            "dba",
+            "analytics"
+          ],
+          "i": [
+            "sre"
+          ]
+        },
+        {
+          "task": "Verify data quality and reconciliation",
+          "r": "analytics",
+          "a": "analytics",
+          "c": [
+            "business",
+            "qa"
+          ],
+          "i": [
+            "product"
+          ]
+        },
+        {
+          "task": "Release and monitoring",
+          "r": "data_platform",
+          "a": "data_platform",
+          "c": [
+            "sre",
+            "data_eng"
+          ],
+          "i": [
+            "business"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "model",
+      "name": "Model / MLOps change",
+      "keywords": [
+        "model",
+        "ml",
+        "mlops",
+        "predict",
+        "drift",
+        "feature",
+        "scoring",
+        "retrain",
+        "xgboost",
+        "risk"
+      ],
+      "defaultSystems": [
+        "warehouse",
+        "feature_store",
+        "ml_service",
+        "backend"
+      ],
+      "checks": [
+        "Version training data, features, code and model artefacts.",
+        "Review validation, fairness and model-risk requirements where applicable.",
+        "Test feature freshness, serving contract and offline/online parity.",
+        "Define rollback, champion/challenger and monitoring thresholds.",
+        "Monitor delayed-label performance and drift separately."
+      ],
+      "raci": [
+        {
+          "task": "Train and assess model",
+          "r": "ds",
+          "a": "ds",
+          "c": [
+            "model_risk",
+            "data_eng"
+          ],
+          "i": [
+            "product"
+          ]
+        },
+        {
+          "task": "Build scoring interface",
+          "r": "ml_engineering",
+          "a": "ml_engineering",
+          "c": [
+            "backend",
+            "mlops"
+          ],
+          "i": [
+            "sre"
+          ]
+        },
+        {
+          "task": "Deploy and monitor model",
+          "r": "mlops",
+          "a": "mlops",
+          "c": [
+            "devops",
+            "sre"
+          ],
+          "i": [
+            "model_risk"
+          ]
+        },
+        {
+          "task": "Independent model validation",
+          "r": "model_risk",
+          "a": "model_risk",
+          "c": [
+            "ds"
+          ],
+          "i": [
+            "business"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "security",
+      "name": "Identity / security configuration",
+      "keywords": [
+        "firewall",
+        "iam",
+        "security",
+        "access",
+        "permission",
+        "sftp",
+        "vpn",
+        "certificate",
+        "secret",
+        "infosec",
+        "vulnerability"
+      ],
+      "defaultSystems": [
+        "iam_service",
+        "gateway",
+        "backend"
+      ],
+      "checks": [
+        "Confirm requested access scope and risk classification.",
+        "Apply least privilege and separate duties as required.",
+        "Verify network, certificates, credentials and audit logging.",
+        "Run policy approval or exception workflow when needed.",
+        "Record rollback, access expiry and monitoring owner."
+      ],
+      "raci": [
+        {
+          "task": "Security control design",
+          "r": "security_arch",
+          "a": "security_arch",
+          "c": [
+            "appsec",
+            "infra_sec"
+          ],
+          "i": [
+            "delivery"
+          ]
+        },
+        {
+          "task": "Identity / permission change",
+          "r": "iam",
+          "a": "iam",
+          "c": [
+            "infra_sec",
+            "backend"
+          ],
+          "i": [
+            "appsec"
+          ]
+        },
+        {
+          "task": "Infrastructure security verification",
+          "r": "infra_sec",
+          "a": "infra_sec",
+          "c": [
+            "network",
+            "cloud"
+          ],
+          "i": [
+            "grc"
+          ]
+        },
+        {
+          "task": "Risk acceptance if exception",
+          "r": "grc",
+          "a": "ciso",
+          "c": [
+            "security_arch",
+            "business"
+          ],
+          "i": [
+            "delivery"
+          ]
+        }
+      ]
+    }
+  ],
+  "controls": [
+    {
+      "id": "origin",
+      "name": "CORS and origin allowlist",
+      "owner": "api_platform",
+      "consult": [
+        "appsec",
+        "frontend"
+      ],
+      "description": "Allow only approved browser origins; API must enforce user-level permissions separately.",
+      "applies": [
+        "api"
+      ]
+    },
+    {
+      "id": "identity",
+      "name": "Authentication and authorisation",
+      "owner": "iam",
+      "consult": [
+        "backend",
+        "appsec"
+      ],
+      "description": "Separate token validation, machine access, and account-level authorisation.",
+      "applies": [
+        "api",
+        "security"
+      ]
+    },
+    {
+      "id": "contract",
+      "name": "Data/API contract compatibility",
+      "owner": "integration",
+      "consult": [
+        "backend",
+        "data_eng",
+        "ba"
+      ],
+      "description": "Version and validate semantics, schemas, keys and effective dates.",
+      "applies": [
+        "api",
+        "process",
+        "data"
+      ]
+    },
+    {
+      "id": "reconciliation",
+      "name": "Source-to-report reconciliation",
+      "owner": "analytics",
+      "consult": [
+        "data_eng",
+        "business"
+      ],
+      "description": "Compare operational state and reporting with explicit grain and freshness.",
+      "applies": [
+        "process",
+        "data"
+      ]
+    },
+    {
+      "id": "model_validation",
+      "name": "Model validation and drift",
+      "owner": "model_risk",
+      "consult": [
+        "ds",
+        "mlops"
+      ],
+      "description": "Separate data drift, model risk and outcome performance.",
+      "applies": [
+        "model"
+      ]
+    },
+    {
+      "id": "release",
+      "name": "CI/CD and rollback",
+      "owner": "devops",
+      "consult": [
+        "qa",
+        "sre",
+        "appsec"
+      ],
+      "description": "Automate validation, deploy, observe and restore.",
+      "applies": [
+        "api",
+        "process",
+        "data",
+        "model",
+        "security"
+      ]
+    }
+  ]
+}
