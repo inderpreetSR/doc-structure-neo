@@ -1,0 +1,27 @@
+name: Validate Enterprise Tech Atlas
+
+on:
+  push:
+    paths:
+      - 'manuals/enterprise-tech-operating-atlas/**'
+      - '.github/workflows/validate-enterprise-tech-atlas.yml'
+  pull_request:
+    paths:
+      - 'manuals/enterprise-tech-operating-atlas/**'
+      - '.github/workflows/validate-enterprise-tech-atlas.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-atlas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Validate JSON references, hierarchy and ownership
+        run: python manuals/enterprise-tech-operating-atlas/scripts/validate_atlas.py
+      - name: Check JavaScript syntax
+        run: node --check manuals/enterprise-tech-operating-atlas/assets/atlas.js
